@@ -14,7 +14,8 @@
     </v-flex>
     <v-flex sm12 md6 lg4 v-show="secondFilter!=''">
       <div class="select mx-auto">
-        <v-btn color="primary" depressed :class="`white--text rounded-lg px-8 ${$vuetify.breakpoint.name=='xs' ? 'float-right':''}`"  :right="$vuetify.breakpoint.name=='xs'" @click="search">
+        <v-btn color="primary" depressed :class="`white--text rounded-lg px-8 ${$vuetify.breakpoint.name=='xs' ? 'float-right':''}`"  
+        :right="$vuetify.breakpoint.name=='xs'" @click="search">
         Pesquisar
       </v-btn>
       </div>
@@ -23,21 +24,12 @@
   <!-- end area de pesquisa  -->
 
   <!-- start area de cards  -->
-  <v-layout wrap>
-    <transition name="fade" v-for="(pais, index) in countries" :key="index">
-      <v-flex xs12 sm6 lg4 v-show="index < page*itensPerpage && index >= (page-1)*itensPerpage">
-        <Nuxt-Link :to="pais.name.common">
-          <card :pais="pais">
-          </card>
-        </Nuxt-Link>
-      </v-flex>
-    </transition>
-  </v-layout>
+  <cards :countries="countries" :itensPerpage="itensPerpage" :page="page" />
   <!-- end area de cards  -->
 
   <!-- start paginação  -->
   <div class="text-center mb-15 mt-12">
-    <paginate :totalCountries="totalCountries" :page="page" :lengthpage="lengthpage" v-on:actualPage="attPage" ref="paginate">
+    <paginate :totalCountries="totalCountries" :page="page" :lengthpage="lengthpage" v-on:actualPage="attPage" ref="paginate" :itensPerpage="itensPerpage">
     </paginate>
   </div>
   <!-- end paginação  -->
@@ -55,16 +47,17 @@
 </template>
 
 <script>
-import card from '../components/card.vue'
+
 import paginate from '../components/paginate.vue'
-import loading from '../components/loading.vue'
+import cards from '../components/cards.vue'
+import global from '../mixins.js/global'
+
 export default {
   name: 'Home',
-  components:{'card' : card,'paginate':paginate,'loading':loading},
+  components:{ "paginate": paginate,'cards':cards },
   data() {
     return {
       itensPerpage:12,
-      showload:true,
       error:'',
       filter:'country',
       secondFilter:'',
@@ -95,9 +88,12 @@ export default {
       totalCountries:0,
     }
   },
+  mixins:[global],
+
   methods:{
     async changeOptionsFilter(){
       this.filterItens = []
+      // this.secondFilter = ''
       switch(this.filter){
         case 'region':
           this.filterFor = 'Choose a region'
@@ -119,9 +115,10 @@ export default {
           prefilter = await  _.map(this.allData,  function(obj){
             if(obj.languages!=undefined){
               return obj.languages
-            }else{
+            }
+            else{
               return {
-                lang:'No language'
+                eng:'english'
               }
             }
           });
@@ -145,13 +142,7 @@ export default {
         break
       }
     },
-    attPage(ev){
-      this.page = ev
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
-    },
+    
     search(){
       this.showload = true
       this.$refs['paginate'].resetPage()
@@ -177,25 +168,47 @@ export default {
       }
       this.$axios.$get(url)
       .then((res)=>{
+        this.error = ''
         this.countries = this._.orderBy(res, ['name.common'],['asc'])
         this.totalCountries = res.length
         this.lengthpage = Math.ceil(this.totalCountries/this.itensPerpage)
         this.showload = false
       })
       .catch((err)=>{
-          this.err = err
+          this.error = this.responseError(err)
+          this.showload = false
       })
     }
   },
   mounted(){
+    const urlId = new URLSearchParams(location.search)
+    if(urlId.get('query')!=null && urlId.get('value')!=null){
+      switch(urlId.get('query')){
+        case 'region':
+        case 'capital':
+        case 'language':
+        case 'country':
+           this.filter = urlId.get('query')
+        break
+        default:
+          this.filter = 'country'
+      }
+      this.secondFilter = urlId.get('value')
+    }
     this.$axios.$get('all')
     .then((res)=>{
       this.allData = res
+      if(urlId.get('value')!=null){
+        this.secondFilter = urlId.get('value')
+      }
       this.search()
       this.changeOptionsFilter()
+      if(urlId.get('value')!=null){
+        this.secondFilter = urlId.get('value')
+      }
     })
     .catch((err)=>{
-        this.err = err
+        this.err = this.responseError(err)
     })
     
   }

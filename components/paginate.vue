@@ -1,7 +1,7 @@
 <template>
     <div class="text-center">
         <v-pagination
-        v-show="totalCountries > 10"
+        v-show="totalCountries > itensPerpage"
         v-model="thisPage"
         :length="lengthpage"
         :total-visible="7"
@@ -13,7 +13,7 @@
 export default {
     name:'paginate',
     props:[
-        'totalCountries','lengthpage','page'
+        'totalCountries','lengthpage','page','itensPerpage'
     ],
     data() {
         return {
