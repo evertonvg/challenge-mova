@@ -2,49 +2,10 @@
     <v-container>
         <section v-if="pais!=''" class="d-flex flex-column flex-md-row mt-5 mt-sm-16 mb-sm-12">
             <div class="flag ml-md-8 mx-auto">
-                <img :src="pais.flags[0]" :alt="pais.name.common">
+                <img :src="pais.flags[0] || pais.flags[1]" :alt="pais.name.common">
                 <!-- utilize "pais.flags.png" caso o metodo acima não esteja funcionando (durante o teste a api mudou as chaves)-->
             </div>
-            <div class="content px-md-6 flex-md-grow-1">
-                <v-list class="pt-sm-0 select mx-auto">
-                    <v-list-item class="px-0 px-md-4">
-                        <v-list-item-content>
-                            <v-list-item-title>Name: {{pais.name.common}}</v-list-item-title>
-                        </v-list-item-content>
-                    </v-list-item >
-                    <v-list-item class="px-0 px-md-4">
-                        <v-list-item-content>
-                            <v-list-item-title>capital: {{pais.capital[0]}}</v-list-item-title>
-                        </v-list-item-content>
-                    </v-list-item>
-                    <v-list-item class="px-0 px-md-4">
-                        <v-list-item-content>
-                            <v-list-item-title>Region: <Nuxt-Link :to="`/?query=region&value=${pais.region}`">{{pais.region}}</Nuxt-Link></v-list-item-title>
-                        </v-list-item-content>
-                    </v-list-item>
-                    <v-list-item class="px-0 px-md-4">
-                        <v-list-item-content>
-                            <v-list-item-title>Sub-region: {{pais.continents[0]}}</v-list-item-title>
-                        </v-list-item-content>
-                    </v-list-item>
-                    <v-list-item class="px-0 px-md-4">
-                        <v-list-item-content>
-                            <v-list-item-title>Population: {{ (Math.round(pais.population * 100) / 100).toLocaleString() }}</v-list-item-title>
-                        </v-list-item-content>
-                    </v-list-item>
-                    <v-list-item class="px-0 px-md-4">
-                        <v-list-item-content>
-                            <v-list-item-title>Languages: 
-                                <span v-for=" (language,key,index) in pais.languages" :key="language.nativeName">
-                                <span v-if="index!=0">,</span>
-                                {{language}}
-                                <span v-if="index == Object.keys(pais.languages).length - 1">.</span>
-                                </span> 
-                            </v-list-item-title>
-                        </v-list-item-content>
-                    </v-list-item>
-                </v-list>
-            </div>
+            <list :pais="pais" />
         </section>
 
         <div class="ml-sm-8 pt-16 mb-12 select-limit mx-auto"  v-if="borders.length>1">
@@ -72,6 +33,7 @@
 import global from '../mixins.js/global'
 import cards from '../components/cards.vue'
 import paginate from '../components/paginate.vue'
+import list from '../components/list.vue'
 export default {
     head(){
         return{
@@ -80,7 +42,8 @@ export default {
     },
     components:{
         'cards':cards,
-        'paginate':paginate
+        'paginate':paginate,
+        'list':list
     },
     data() {
         return {
@@ -137,10 +100,7 @@ export default {
         width: 316px;
         margin: auto;
     }
-    .v-list-item
-    {
-        min-height: 0;
-    }
+    
     @media(min-width:600px){
         .flag{
             height:258px;

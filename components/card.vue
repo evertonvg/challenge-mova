@@ -2,7 +2,7 @@
     <v-tooltip bottom>
         <template v-slot:activator="{ on, attrs }">
             <div class="overflow-hidden card mx-auto mb-12" v-bind="attrs" v-on="on">
-            <img :src="pais.flags[0]" :alt="pais.name.common">
+            <img :src="pais.flags[0] || pais.flags[1]" :alt="pais.name.common" loading=lazy @error="defaultflag">
             <!-- utilize "pais.flags.png" caso o metodo acima não esteja funcionando (durante o teste a api mudou as chaves)-->
             </div>
         </template>
@@ -12,7 +12,12 @@
 <script>
 export default {
     name:'card',
-    props:['pais']
+    props:['pais'],
+    methods:{
+      defaultflag(ev){
+        ev.target.src="https://mova.vc/img/footer_mova.svg"
+      }
+    }
 }
 </script>
 <style>
