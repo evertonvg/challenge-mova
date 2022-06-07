@@ -1,9 +1,5 @@
 <template>
-    <v-app-bar
-      height="100"
-      fixed
-      app
-    >
+    <v-app-bar height="100" fixed app>
         <img src="../static/img/logo_principal.svg" alt="Logo da Mova">
         <v-spacer></v-spacer>
         <v-btn class="primary--text rounded-0 border-sm-0" depressed :outlined="$vuetify.breakpoint.name!='xs'" @click="$router.push('/')">
