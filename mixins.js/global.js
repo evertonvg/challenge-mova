@@ -6,6 +6,7 @@ export default{
     data() {
         return {
             showload:true,
+            itensPerpage:12
         }
     },
     methods:{

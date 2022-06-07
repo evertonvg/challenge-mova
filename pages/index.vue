@@ -1,49 +1,39 @@
 <template>
-<v-container>
-  <!-- start area de pesquisa  -->
-  <v-layout row wrap class="mb-12 mt-16">
-    <v-flex xs12 sm6 lg4>
-      <v-select v-model="filter" :items="options" item-text="name" item-value="value"
-        label="Filter by" class="select mx-auto" @change="changeOptionsFilter">
-      </v-select>
-    </v-flex>
-    <v-flex xs12 sm6 lg4>
-      <v-select v-if="filter!=''" item-text="language" item-value="abbr" v-model="secondFilter"
-        :items="filterItens" :label="filterFor" class="select mx-auto">
-      </v-select>
-    </v-flex>
-    <v-flex sm12 md6 lg4 v-show="secondFilter!=''">
-      <div class="select mx-auto">
-        <v-btn color="primary" depressed :class="`white--text rounded-lg px-8 ${$vuetify.breakpoint.name=='xs' ? 'float-right':''}`"  
-        :right="$vuetify.breakpoint.name=='xs'" @click="search">
-        Pesquisar
-      </v-btn>
-      </div>
-    </v-flex>
-  </v-layout>
-  <!-- end area de pesquisa  -->
+  <v-container>
+    <v-layout row wrap class="mb-12 mt-16">
+      <v-flex xs12 sm6 lg4>
+        <v-select v-model="filter" :items="options" item-text="name" item-value="value"
+          label="Filter by" class="select-limit mx-auto" @change="changeOptionsFilter">
+        </v-select>
+      </v-flex>
+      <v-flex xs12 sm6 lg4>
+        <v-select v-if="filter!=''" item-text="language" item-value="abbr" v-model="secondFilter"
+          :items="filterItens" :label="filterFor" class="select-limit mx-auto">
+        </v-select>
+      </v-flex>
+      <v-flex sm12 md12 lg4 v-show="secondFilter!=''">
+        <div class="search-limit text-right text-sm-left">
+          <v-btn color="primary" depressed class="white--text rounded-lg px-8 ml-0 ml-sm-8 ml-md-15 ml-lg-0"  
+          :right="$vuetify.breakpoint.name=='xs'" @click="search">
+          Pesquisar
+        </v-btn>
+        </div>
+      </v-flex>
+    </v-layout>
 
-  <!-- start area de cards  -->
-  <cards :countries="countries" :itensPerpage="itensPerpage" :page="page" />
-  <!-- end area de cards  -->
+    <cards :countries="countries" :itensPerpage="itensPerpage" :page="page" />
 
-  <!-- start paginação  -->
-  <div class="text-center mb-15 mt-12">
-    <paginate :totalCountries="totalCountries" :page="page" :lengthpage="lengthpage" v-on:actualPage="attPage" ref="paginate" :itensPerpage="itensPerpage">
-    </paginate>
-  </div>
-  <!-- end paginação  -->
+    <div class="text-center mb-15 mt-12">
+      <paginate :totalCountries="totalCountries" :page="page" :lengthpage="lengthpage" v-on:actualPage="attPage" ref="paginate" :itensPerpage="itensPerpage">
+      </paginate>
+    </div>
 
-  <!-- start area de avisos  -->
-  <h1 class="text-center mt-16" v-show="error!=''">
-      {{error}}
-  </h1>
-  <!-- end area de avisos  -->
+    <h1 class="text-center mt-16" v-show="error!=''">
+        {{error}}
+    </h1>
 
-  <!-- start componente de loading  -->
-  <loading v-show="showload"></loading>
-  <!-- end componente de loading  -->
-</v-container>
+    <loading v-show="showload"></loading>
+  </v-container>
 </template>
 
 <script>
@@ -57,7 +47,6 @@ export default {
   components:{ "paginate": paginate,'cards':cards },
   data() {
     return {
-      itensPerpage:12,
       error:'',
       filter:'country',
       secondFilter:'',
@@ -214,3 +203,20 @@ export default {
   }
 }
 </script>
+<style>
+  .select-limit{
+    width: 316px;
+    max-width:100%;
+  }
+  .search-limit{
+    width: 316px;
+    max-width:100%;
+    margin: auto;
+  }
+
+  @media(min-width:600px){
+    .search-limit{
+      margin:initial;
+    }
+  }
+</style>

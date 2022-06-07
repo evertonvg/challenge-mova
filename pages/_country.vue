@@ -1,39 +1,38 @@
 <template>
     <v-container>
-        <!-- start componente com informações sobre o pais  -->
         <section v-if="pais!=''" class="d-flex flex-column flex-md-row mt-5 mt-sm-16 mb-sm-12">
             <div class="flag ml-md-8 mx-auto">
                 <img :src="pais.flags[0]" :alt="pais.name.common">
                 <!-- utilize "pais.flags.png" caso o metodo acima não esteja funcionando (durante o teste a api mudou as chaves)-->
             </div>
-            <div class="content px-sm-6 flex-grow-1">
+            <div class="content px-md-6 flex-md-grow-1">
                 <v-list class="pt-sm-0 select mx-auto">
-                    <v-list-item class="px-0 px-sm-4">
+                    <v-list-item class="px-0 px-md-4">
                         <v-list-item-content>
                             <v-list-item-title>Name: {{pais.name.common}}</v-list-item-title>
                         </v-list-item-content>
                     </v-list-item >
-                    <v-list-item class="px-0 px-sm-4">
+                    <v-list-item class="px-0 px-md-4">
                         <v-list-item-content>
                             <v-list-item-title>capital: {{pais.capital[0]}}</v-list-item-title>
                         </v-list-item-content>
                     </v-list-item>
-                    <v-list-item class="px-0 px-sm-4">
+                    <v-list-item class="px-0 px-md-4">
                         <v-list-item-content>
                             <v-list-item-title>Region: <Nuxt-Link :to="`/?query=region&value=${pais.region}`">{{pais.region}}</Nuxt-Link></v-list-item-title>
                         </v-list-item-content>
                     </v-list-item>
-                    <v-list-item class="px-0 px-sm-4">
+                    <v-list-item class="px-0 px-md-4">
                         <v-list-item-content>
                             <v-list-item-title>Sub-region: {{pais.continents[0]}}</v-list-item-title>
                         </v-list-item-content>
                     </v-list-item>
-                    <v-list-item class="px-0 px-sm-4">
+                    <v-list-item class="px-0 px-md-4">
                         <v-list-item-content>
                             <v-list-item-title>Population: {{ (Math.round(pais.population * 100) / 100).toLocaleString() }}</v-list-item-title>
                         </v-list-item-content>
                     </v-list-item>
-                    <v-list-item class="px-0 px-sm-4">
+                    <v-list-item class="px-0 px-md-4">
                         <v-list-item-content>
                             <v-list-item-title>Languages: 
                                 <span v-for=" (language,key,index) in pais.languages" :key="language.nativeName">
@@ -47,28 +46,26 @@
                 </v-list>
             </div>
         </section>
-        <!-- end componente com informações sobre o pais   -->
-        <div class="ml-sm-8 pt-16 mb-12 select mx-auto" v-show="borders.length>1">
+
+        <div class="ml-sm-8 pt-16 mb-12 select-limit mx-auto"  v-if="borders.length>1">
             Neighboring countries
         </div>
-        <!-- start componente de cards com os vizinhos  -->
+        <div class="ml-sm-8 pt-16 mb-12 select-limit mx-auto" v-else>
+            this country has no neighbors
+        </div>
+
         <cards :countries="borders" :itensPerpage="itensPerpage" :page="page"></cards>
-        <!-- end componente de cards com os vizinhos -->
-
-        <!-- start paginação de paises vizinhos  -->
-        <paginate :totalCountries="totalCountries" :page="page" :lengthpage="lengthpage" v-on:actualPage="attPage" ref="paginate" :itensPerpage="itensPerpage">
+  
+        <paginate :totalCountries="totalCountries" :page="page" :lengthpage="lengthpage" v-on:actualPage="attPage" 
+            ref="paginate" :itensPerpage="itensPerpage">
         </paginate>
-        <!-- end paginação de paises vizinhos-->
 
-        <!-- start aviso de erro  -->
         <h1 class="text-center mt-16" v-show="error!=''">
             {{error}}
         </h1>
-        <!-- end aviso de erro  -->
 
-        <!-- start componente de loading  -->
         <loading v-show="showload"></loading>
-        <!-- end componente de loading  -->
+
     </v-container>
 </template>
 <script>
@@ -90,16 +87,12 @@ export default {
             pais:'',
             error:'',
             borders:[],
-            itensPerpage:12,
             page:1,
             totalCountries:0,
             lengthpage:0
         }
     },
     mixins:[global],
-    methods:{
-        
-    },
     watch:{
         borders(){
             this.totalCountries = this.borders.length
@@ -122,7 +115,6 @@ export default {
                 })
             })
         })
-        
         .catch((err)=>{
             this.error = responseError(err)
         })
@@ -141,10 +133,21 @@ export default {
         height: 100%;
         object-fit: cover;
     }
+    .content{
+        width: 316px;
+        margin: auto;
+    }
+    .v-list-item
+    {
+        min-height: 0;
+    }
     @media(min-width:600px){
         .flag{
             height:258px;
             max-width: 100%;
+        }
+        .content{
+            width: 443px;
         }
     }
 </style>

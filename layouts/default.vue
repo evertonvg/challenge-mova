@@ -39,8 +39,4 @@ export default {
   opacity: 1;
   transform: translateY(0);
 }
-.select{
-  width: 316px;
-  max-width:100%;
-}
 </style>
